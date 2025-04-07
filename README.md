@@ -1,66 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Weather Caching and Scheduling App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This Laravel application demonstrates **task scheduling** and **caching** with Redis while interacting with the **OpenWeatherMap API**. It uses scheduled tasks to delete old logs and clear cached weather data every hour.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Fetches weather data for a specified city from OpenWeatherMap API.
+- Caches the weather data for 1 hour to improve response times.
+- Logs all API requests, including request and response data, with timestamps.
+- Automatically deletes logs older than 30 days using Laravel’s task scheduling.
+- Clears weather cache every hour with a custom Artisan command.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ⚡️ Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.1 or higher
+- Laravel 10.x
+- Redis installed locally or on your server
+- OpenWeatherMap API key
 
-## Learning Laravel
+## 🛠️ Setup Instructions
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Clone the Repository
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+git clone https://github.com/yourusername/laravel-weather-caching-scheduling.git
+cd laravel-weather-caching-scheduling
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 2.  Install Dependencies
 
-## Laravel Sponsors
+Run the following command to install the Laravel dependencies:
+```bash
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
+## 3. Set Up the Environment File
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Copy the .env.example file to .env:
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 4. Configure OpenWeatherMap API Key
+- in your .env file paste
+```env
+- OPENWEATHERMAP_API_KEY=your_api_key_here
+```
+## 5. Configure Redis
+```bash ```
+```
+- brew install redis
+- brew services start redis
+```
+Then, set up Redis in your .env file:
 
-## Code of Conduct
+```.env```
+```
+CACHE_DRIVER=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 6. Run Database Migrations
+- Run the migrations to create the necessary tables:
 
-## Security Vulnerabilities
+```bash```
+```
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+### 🔧 Running the Application
+- Serve the application using Laravel's built-in server:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan serve
+Visit http://127.0.0.1:8000/api/weather/Abuja to get the weather for Abuja.
+```
+
+
+# 🔧 Artisan Commands
+### Running the Scheduler
+- To manually run scheduled tasks:
+
+```bash```
+
+```
+php artisan schedule:run
+```
+### Clear Weather Cache Manually
+- You can manually clear the cached weather data with:
+
+```bash```
+```
+php artisan weather:clear-cache
+```
+
+
+# 📅 Task Scheduling
+- The application uses Laravel's task scheduling to automate the following:
+
+- Deletes logs older than 30 days: Runs daily at midnight.
+
+- Clears weather cache: Runs every hour.
+
+To ensure that tasks are scheduled automatically, add the following cron entry on your server:
+
+```bash```
+```
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+
+# 📝 License
+- This project is open-source and available under the MIT License. See the LICENSE file for more details.
